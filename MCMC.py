@@ -14,9 +14,9 @@ from scipy.stats import bernoulli, weibull_min, norm, gamma, expon, uniform
 from matplotlib.pylab import subplots, plot, close, hist, show,rcParams, axvline, title, scatter, fill_between, tight_layout
 
 #%%
-q = 15 # Numero de parámetros a inferir
+q = 15 # Numero de parametros a inferir
 logdensity=norm.logpdf #log-densidad del modelo
-#Nombres de los parámetros
+#Nombres de los parametros
 par_names=["gmo", "Vcmax", "delta", "Tp", r"$\theta_{NPR}$",
             r"$\theta_{PR}$", r"$J_{max}^{NPR}$", 
             r"$J_{max}^{PR}$", r"$k2_{LL}^{NPR}$" , 
@@ -25,7 +25,7 @@ par_names=["gmo", "Vcmax", "delta", "Tp", r"$\theta_{NPR}$",
                
 #VarsOrder =  gmo, Vcmax, delta, Tp, thetaNPR, thetaPR, JmaxNPR, JmaxPR, k2_LLNPR, k2_LLPR, Sco, Kmo, Kmc, Rd_NPR, Rd_PR 
 
-#A prioris de los parámetros
+#A prioris de los parametros
 par_prior =[uniform(0.0, scale=0.01),    #gmo,
             uniform(10.0,scale=190),      #Vcmax
             uniform(0.0, scale=5.0),      #delta
@@ -50,8 +50,8 @@ par_supp  = [ lambda al: al>0.0, lambda la: la>0.0, lambda al: al>0.0, lambda la
 
 
 #%%
-"Función para correr los MCMC para cada planta"
-def run_N(N): #N es el número de planta
+"Funcion para correr los MCMC para cada planta"
+def run_N(N): #N es el numero de planta
     modelo = PHSmodel(init_dict)
     datos_trigo = datosendic(oxigeno = [20, 210], N = N)
     modelo.uploadExpData(datos_trigo)
@@ -60,7 +60,7 @@ def run_N(N): #N es el número de planta
     datos2=modelo.dataAt(constvar='Qin',oxigeno=210)
     datos3=modelo.dataAt(constvar='Ci',oxigeno=20)
     datos4=modelo.dataAt(constvar='Ci',oxigeno=210)
-    #Agrega identificadores para los niveles de oxígeno
+    #Agrega identificadores para los niveles de oxigeno
     datos1['Osp'] = np.full(len(datos1["A"]),20)
     datos2['Osp'] = np.full(len(datos2["A"]),210)
     datos3['Osp'] = np.full(len(datos3["A"]),20)
@@ -85,7 +85,7 @@ def run_N(N): #N es el número de planta
     sigma = np.array(dat['Error'])
     
     #%%
-    #Cuantificiación de incertidumbre bayesiana
+    #Cuantificiacion de incertidumbre bayesiana
     buq = BUQ( q = q, data = dat["A"], logdensity=logdensity, sigma=sigma,\
         F = F, t = Data, par_names = par_names, par_prior = par_prior, \
         par_supp=par_supp)

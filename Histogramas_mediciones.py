@@ -1,5 +1,5 @@
 """
-Hacer los histogramas de los parámetros usando las mediciones
+Hacer los histogramas de los parametros usando las mediciones
 """
 
 #%%
@@ -14,7 +14,7 @@ from scipy.stats import bernoulli, weibull_min, norm, gamma, expon, uniform
 from matplotlib.pylab import subplots, plot, close, hist, show,rcParams, axvline, title, scatter, fill_between, tight_layout
 
 #%%
-q = 15 # Numero de parnmetros a inferir
+q = 15 # Numero de parametros a inferir
 logdensity=norm.logpdf #log-densidad del modelo
 #Nombres de los parÃ¡metros
 par_names=["gmo", "Vcmax", "delta", "Tp", r"$\theta_{NPR}$",
@@ -30,7 +30,7 @@ plant_names = ["P1L10A","P2L3D","P3L5B","P4L9B", "P5L11B","P6L2E","P7L8B","P8L1D
                "P13L5D","P14L9A","P15L10C","P16L3E","P17L8A","P18L1B","P19L11C","P20L2B","P21L1A","P22L6D","P23L12D","P24L4A",
                "P25L9D","P26L10E","P27L3A","P28L5C","P29L1C","P30L11E","P31L2A","P32L8E","P33L6B","P34L12C","P35L4C","P36L7D"]
 
-#A prioris de los parámetros
+#A prioris de los parametros
 par_prior =[uniform(0.0, scale=0.01),    #gmo,
             uniform(10.0,scale=190),      #Vcmax
             uniform(0.0, scale=5.0),      #delta
@@ -56,7 +56,7 @@ par_supp  = [ lambda al: al>0.0, lambda la: la>0.0, lambda al: al>0.0, lambda la
 
 #%%
 "Bucle para realizar los histogramas para cada planta"
-for N in range(1,37): #N es el número de planta
+for N in range(1,37): #N es el numero de planta
     modelo = PHSmodel(init_dict)
     datos_trigo = datosendic(oxigeno = [20, 210], N = N) 
     modelo.uploadExpData(datos_trigo)
@@ -65,7 +65,7 @@ for N in range(1,37): #N es el número de planta
     datos2=modelo.dataAt(constvar='Qin',oxigeno=210)
     datos3=modelo.dataAt(constvar='Ci',oxigeno=20)
     datos4=modelo.dataAt(constvar='Ci',oxigeno=210)
-    #Agrega identificadores para los niveles de oxígeno
+    #Agrega identificadores para los niveles de oxigeno
     datos1['Osp'] = np.full(len(datos1["A"]),20)
     datos2['Osp'] = np.full(len(datos2["A"]),210)
     datos3['Osp'] = np.full(len(datos3["A"]),20)
@@ -89,7 +89,7 @@ for N in range(1,37): #N es el número de planta
     sigma = np.array(dat['Error'])
     
     #%%
-    #Cuantificiación de incertidumbre bayesiana
+    #Cuantificiacion de incertidumbre bayesiana
     buq = BUQ( q = q, data = dat["A"], logdensity=logdensity, sigma=sigma,\
         F = F, t = Data, par_names = par_names, par_prior = par_prior, \
         par_supp=par_supp)
@@ -98,8 +98,8 @@ for N in range(1,37): #N es el número de planta
     buq.LoadtwalkOutput(f'MCMC{N}.csv1') #Leo el MCMC ya guardado
     #%%
 
-    "Histogramas de los parámetros"
-    #Estilo y tamaños de fuentes
+    "Histogramas de los parametros"
+    #Estilo y tamanos de fuentes
     rcParams.update({
     "text.usetex": False,
     "font.family": "serif",
@@ -109,21 +109,21 @@ for N in range(1,37): #N es el número de planta
     "xtick.labelsize": 12,
     "ytick.labelsize": 12,
     "legend.fontsize": 12})
-    fig, axes = subplots(nrows=3, ncols=5, figsize=(15, 10)) #Cuadricula de 5x3 para hacer los histogramas juntos
+    fig, axes = subplots(nrows=5, ncols=3, figsize=(12, 15)) #Cuadricula de 5x3 para hacer los histogramas juntos
     axes = axes.flatten()  #Para poder indexarlos linealmente
 
-    "Gráfica de los histogramas"
+    "Grafica de los histogramas"
     #Bucle para graficar cada histograma
-    for k in range(15): #Son 15 parámetros
-        ax = axes[k] #Llama a la k-ésima entrada de la cuadricula
+    for k in range(15): #Son 15 parametros
+        ax = axes[k] #Llama a la k-esima entrada de la cuadricula
         buq.PlotPost(par=k, bins=15, burn_in=1_000_000, ax=ax) #Histograma graficado en la entrada k de la cuadricula
         # Agregar letra del inciso
-        letra = chr(97 + k)  # 97 es el código ASCII de 'a'
+        letra = chr(97 + k)  # 97 es el codigo ASCII de 'a'
         ax.set_title(f"({letra})", loc='center') #Pone el inciso a cada histograma
         if N!=17:
            df = pd.read_excel('./Parametros_ref.xlsx', header=[0]) #Leo el docuemnto con los valores estimados por Yin et. al. (2009)
-           x_ref = df[f"Planta {N}"]  #Uso los valores de referencia de los parámetros para cada planta
-           ax.plot(x_ref[k], 0, 'r*', markersize=15, transform=ax.get_xaxis_transform()) #Agrego un astérisco con el valor de referencia a cada histograma
+           x_ref = df[f"Planta {N}"]  #Uso los valores de referencia de los parametros para cada planta
+           ax.plot(x_ref[k], 0, 'r*', markersize=15, transform=ax.get_xaxis_transform()) #Agrego un asterisco con el valor de referencia a cada histograma
            
     #Borrar los ejes sobrantes
     for j in range(k+1, len(axes)):
@@ -131,5 +131,5 @@ for N in range(1,37): #N es el número de planta
     tight_layout()
     
     #Guarda la imagen en la carpeta y con el nombre para cada planta
-    fig.savefig("Histogramas/Diseño convencional/{plant_names[N]}.png", dpi=300, bbox_inches='tight') #Guarda la imagen con los histogramas
+    fig.savefig(f"Histogramas/Diseno convencional/{plant_names[N-1]}.png", dpi=300, bbox_inches='tight') #Guarda la imagen con los histogramas
 

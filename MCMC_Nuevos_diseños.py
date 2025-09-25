@@ -1,5 +1,5 @@
 """
-Hace los MCMC para los diseños de rejilla y zigzag con datos sintéticos
+Hace los MCMC para los diseños de rejilla y zigzag con datos sinteticos
 """
 
 #%%
@@ -14,7 +14,7 @@ from numpy import loadtxt, linspace, outer, ones
 from matplotlib.pylab import subplots, plot, close, hist, show, axvline, title, tight_layout, axvline, scatter
 
 #%%
-"Configuración para el diseño de zigzag"
+"Configuracion para el diseño de zigzag"
 Czz = np.linspace(1300,0,61) #CO2
 Izz = np.full(61,2000) #luz incidente
 #Zigzag
@@ -30,21 +30,21 @@ zigzag = pd.read_excel('./Zigzag.xlsx', header=[0]) #Lee el excel con los errore
 sigma_zz = zigzag["Error"]
 
 #%%
-"Configuación para el diseño de rejilla"   
+"Configuacion para el diseño de rejilla"   
 Igrid = outer( linspace( 0, 2000, num=20), ones(20)) #Luz incidente
 Cgrid = outer( linspace( 0., 1300, num=20), ones(20)).T #Niveles de CO2
 Igrid = np.array([Igrid.ravel(),Igrid.ravel()]).ravel() 
 Cgrid = np.array([Cgrid.ravel(),Cgrid.ravel()]).ravel()
 
-#Error para el diseño de zigzag
+#Error para el diseño de rejilla
 grid = pd.read_excel('./Grid.xlsx', header=[0]) #Lee el excel con los errores para el diseño de rejilla
 sigma_grid = grid["Error"]
 
 #%%
-q = 15 # Numero de parámetros a inferir
+q = 15 # Numero de parametros a inferir
 logdensity=norm.logpdf #log-densidad del modelo
-simdata = lambda n, loc, scale: norm.rvs( size=n, loc=loc, scale=scale) #Simula datos con la distribución normal
-#Nombres de los parámetros
+simdata = lambda n, loc, scale: norm.rvs( size=n, loc=loc, scale=scale) #Simula datos con la distribucion normal
+#Nombres de los parametros
 par_names=["gmo", "Vcmax", "delta", "Tp", r"$\theta_{NPR}$",
             r"$\theta_{PR}$", r"$J_{max}^{NPR}$",
             r"$J_{max}^{PR}$", r"$k2_{LL}^{NPR}$" ,
@@ -53,7 +53,7 @@ par_names=["gmo", "Vcmax", "delta", "Tp", r"$\theta_{NPR}$",
 
 #VarsOrder =  gmo, Vcmax, delta, Tp, thetaNPR, thetaPR, JmaxNPR, JmaxPR, k2_LLNPR, k2_LLPR, Sco, Kmo, Kmc, Rd_NPR, Rd_PR 
 
-#A prioris de los parámetros
+#A prioris de los parametros
 par_prior =[uniform(0.0, scale=0.01),    #gmo,
             uniform(10.0,scale=190),      #Vcmax
             uniform(0.0, scale=5.0),      #delta
@@ -78,7 +78,7 @@ par_supp  = [ lambda al: al>0.0, lambda la: la>0.0, lambda al: al>0.0, lambda la
 
 
 #%%
-"Función para correr los MCMC para cada planta"
+"Funcion para correr los MCMC para cada planta"
 def run_N (N): 
     if N!=17:
         modelo = PHSmodel(init_dict)
@@ -91,10 +91,10 @@ def run_N (N):
         #Temperatura de la hoja
         T_NPR = np.full(61,np.mean(datos_trigo["e1"]["Tleaf"]))
         T_PR = np.full(61,np.mean(datos_trigo["e2"]["Tleaf"]))
-        #Niveles de oxígeno
+        #Niveles de oxigeno
         O_NPR = np.full(61,np.mean(datos_trigo["e1"]["PO2"]))
         O_PR = np.full(61,np.mean(datos_trigo["e2"]["PO2"]))
-        #Identificador de niveles de oxígeno
+        #Identificador de niveles de oxigeno
         Osp_NPR = np.full(61,20)
         OSP_PR = np.full(61,210)
         
@@ -108,12 +108,12 @@ def run_N (N):
         #%%
         "Datos para el diseño de rejilla"
         # Set-up experimental data
-        mask = dat['Osp'] == 20 #Filtrar los datos de oxígeno bajo
+        mask = dat['Osp'] == 20 #Filtrar los datos de oxigeno bajo
         #Niveles de oxigeno
         O = np.array([np.full(int(len(Cgrid)/2),np.mean(dat['O'][mask])),np.full(int(len(Cgrid)/2),np.mean(dat['O'][~mask]))]).ravel()
         #Temperatura
         T = np.array(np.full(len(Cgrid),np.mean(dat['T']))).ravel()
-        #Identificador de nivel de oxígeno
+        #Identificador de nivel de oxigeno
         Osp = np.array([np.full(int(len(Cgrid)/2), 20),np.full(int(len(Cgrid)/2),210)]).ravel()
         
         # Set-up experimental data (rejilla)
@@ -134,8 +134,8 @@ def run_N (N):
             F = F, t = Data_zz, par_names = par_names, par_prior = par_prior, par_supp=par_supp)
         
         # %%
-        "Simulación de datos sintéticos"
-        #Valores de referencia para los parámetros
+        "Simulacion de datos sinteticos"
+        #Valores de referencia para los parametros
         df = pd.read_excel('./Parametros_ref.xlsx', header=[0]) #Lee el excel con los valores de referencia
         x_ref = df[f"Planta {N}"]  #Toma el valor de referencia para la planta N (Yin et al p.41-44)
         
